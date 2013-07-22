@@ -11,10 +11,20 @@
  */
 function metacaptcha_form_alter(&$form, &$form_state, $form_id)
 {
-    $dir = drupal_get_path('module','metacaptcha');
-    $dir .= '/js/validate.js';
-//    drupal_add_js($dir);
-    $form['#attached']['js'][] = $dir;
+    dpm($form_id);
+
+    if ($form_id == 'comment_node_article_form'){
+        $form['title']['#title'] = t('Ba Tung');
+        $dir = drupal_get_path('module','metacaptcha');
+        $js_dir = $dir.'/js/validate.js';
+        $form['#attached']['js'][] = $js_dir;
+
+        require_once $dir.'/php/metacaptcha_lib.php'; //Link to metacaptcha_lib.php
+        $formID="commentform";
+        $lib_path = $dir."/php/metacaptcha.php";
+        echo initialize_metacaptcha($lib_path, $formID);
+    }
+
 }
 
 function metacaptcha_help($path, $arg){
