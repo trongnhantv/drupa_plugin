@@ -1,0 +1,6 @@
+;$Id$
+name = metacaptcha
+description = Spam prevention module
+core = 7.x
+package = Drupal 7 Development
+files [] = metacaptcha.module

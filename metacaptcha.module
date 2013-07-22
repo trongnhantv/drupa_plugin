@@ -1,0 +1,28 @@
+<?php
+//$Id$
+/*
+ * @file
+ * This module help prevent spam
+ *
+ */
+
+/*
+ * Implements hook_form_alter()
+ */
+function metacaptcha_form_alter(&$form, &$form_state, $form_id)
+{
+    $dir = drupal_get_path('module','metacaptcha');
+    $dir .= '/js/validate.js';
+//    drupal_add_js($dir);
+    $form['#attached']['js'][] = $dir;
+}
+
+function metacaptcha_help($path, $arg){
+
+    if ($path == 'admin/help#metacaptcha'){
+        $dir = drupal_get_path('module','metacaptcha');
+        $dir .= '/js/validate.js';
+        drupal_add_js($dir);
+        return t($dir);
+    }
+}
