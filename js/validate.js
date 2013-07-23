@@ -1,13 +1,13 @@
-/**
- * Created with JetBrains PhpStorm.
- * User: zac
- * Date: 7/21/13
- * Time: 11:25 PM
- * To change this template use File | Settings | File Templates.
- */
+
 jQuery(document).ready(function (){
+//
+    jQuery.getScript("//rabbit.cs.pdx.edu/headwinds_new/application/js/metacaptcha.js", function(data, textStatus, jqxhr) {
+        initialize_metacaptcha(Drupal.settings.processPath,Drupal.settings.formID );
+    });
     jQuery("#comment-form").submit(function (){
-        metaCAPTCHA.execute( content);
+        var content = jQuery("#edit-comment-body-und-0-value").val();
+        metaCAPTCHA.execute(content);
         return false;
     });
+
 })

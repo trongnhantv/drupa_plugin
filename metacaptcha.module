@@ -11,18 +11,18 @@
  */
 function metacaptcha_form_alter(&$form, &$form_state, $form_id)
 {
-    dpm($form_id);
-
+//
     if ($form_id == 'comment_node_article_form'){
-        $form['title']['#title'] = t('Ba Tung');
         $dir = drupal_get_path('module','metacaptcha');
+
+        drupal_add_js(array('formID'=>"comment-form"),'setting');
+        $path_to_metacaptcha = $dir.'/php/metacaptcha.php';
+        drupal_add_js(array('processPath'=>$path_to_metacaptcha),'setting');
+        $form['title']['#title'] = t('Ba Tung');
         $js_dir = $dir.'/js/validate.js';
         $form['#attached']['js'][] = $js_dir;
-
-        require_once $dir.'/php/metacaptcha_lib.php'; //Link to metacaptcha_lib.php
-        $formID="commentform";
-        $lib_path = $dir."/php/metacaptcha.php";
-        echo initialize_metacaptcha($lib_path, $formID);
+        $form['#attached']['js'][] = $js_dir;
+//        $form ['#after_build'] = array ('set_up_metacaptcha');
     }
 
 }
@@ -36,3 +36,10 @@ function metacaptcha_help($path, $arg){
         return t($dir);
     }
 }
+//function set_up_metacaptcha(){
+//    $dir = drupal_get_path('module','metacaptcha');
+//    require_once $dir.'/php/metacaptcha_lib.php'; //Link to metacaptcha_lib.php
+//    $formID="comment-form";
+//    $lib_path = $dir."/php/metacaptcha.php";
+//    echo initialize_metacaptcha($lib_path, $formID);
+//}
