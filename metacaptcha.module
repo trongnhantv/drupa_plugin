@@ -12,20 +12,39 @@
 function metacaptcha_form_alter(&$form, &$form_state, $form_id)
 {
 //
+//    dsm($form_id);
     if ($form_id == 'comment_node_article_form'){
         $dir = drupal_get_path('module','metacaptcha');
-
-        drupal_add_js(array('formID'=>"comment-form"),'setting');
-        $path_to_metacaptcha = $dir.'/php/metacaptcha.php';
-        drupal_add_js(array('processPath'=>$path_to_metacaptcha),'setting');
-        $form['title']['#title'] = t('Ba Tung');
+        //include validate.js into the form
         $js_dir = $dir.'/js/validate.js';
         $form['#attached']['js'][] = $js_dir;
-        $form['#attached']['js'][] = $js_dir;
+        //register onclick attribute to save button
+        $form ['actions']['submit']["#attributes"] =array("onclick"=>"metacaptcha_enable=true");
+
+        //
+        $path_to_metacaptcha = $dir.'/php/metacaptcha.php';
+        drupal_add_js(array('formID'=>"comment-form"),'setting');
+        drupal_add_js(array('processPath'=>$path_to_metacaptcha),'setting');
+
+
+        //insert metacaptcha field
+        $form['metacaptchaField'] = array(
+            '#element_validate' => array('metacaptcha_validate'),
+                '#type' => 'hidden',
+        );
+
+//        $form["submit"]['#value']="add";
+//        $form["actions"]["preview"] ["#attribute"]= array("onclick"=>"return false;");
+//        $form['submit']['#attributes']['onclick'] =  "javascript: preview =1;";
+//        dsm($form);
+//        $form['actions']['preview'] = array(
+//            '#type' => 'submit',
+//            '#value' => t('coi truoc') );
 //        $form ['#after_build'] = array ('set_up_metacaptcha');
     }
 
 }
+
 
 function metacaptcha_help($path, $arg){
 
@@ -36,6 +55,31 @@ function metacaptcha_help($path, $arg){
         return t($dir);
     }
 }
+
+function metacaptcha_validate($element, &$form_state) {
+        dsm($form_state);
+        if ($form_state["values"]["op"]=="Save"){
+            //
+            $dir = drupal_get_path('module','metacaptcha');
+            require_once $dir.'/php/metacaptcha_lib.php';
+            $comment = $form_state['values']['comment_body']['und'] [0]['value'];
+
+            try{
+                if (!metacaptcha_verify($element["#value"],$comment)){
+                    form_error($element, t(print("Doesn't pass metacaptcha validation")));
+
+                }
+            }
+            catch (Exception $e)
+            {
+                form_error($element, t(print("Fail to verify, please contact admin")));
+            }
+
+        }
+//
+//    }
+}
+
 //function set_up_metacaptcha(){
 //    $dir = drupal_get_path('module','metacaptcha');
 //    require_once $dir.'/php/metacaptcha_lib.php'; //Link to metacaptcha_lib.php
